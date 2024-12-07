@@ -20,7 +20,7 @@ It is known for its scalability, ease of use, and ability to manage diverse envi
 - **Host**: A target machine managed by Ansible.
 - **Inventory**: A file listing all hosts and groups of hosts for automation.
 
-## Setting Up Ansible
+## Setting Up Ansible Insfrastructure
 
 It can be divided into 3 parts:
 1. Configuring Ansible Controller
@@ -83,22 +83,42 @@ It can be divided into 3 parts:
     ```bash
     sudo nano /etc/ansible/hosts
     ```
+    ### Example of an Ansible Inventory file
+
+   ```ini
+   [host]
+   192.168.0.3
+   192.168.0.2
+   
+   [dbservers]
+   db1.example.com
+   db2.example.com
+   
+   [all:vars]
+   ansible_user=ansible
+   ansible_ssh_private_key_file=/path/to/ssh/key
+   ansible_become=true
+   
+   [staging]
+   staging-web1.example.com
+   staging-web2.example.com
+   
+   [production]
+   prod-web1.example.com
+   prod-web2.example.com
+   ```
 
 ### 2. Configuring Ansible Hosts
 
-Create the `ansible` user with sudo privileges and install Ansible on host systems with the following commands (for Debian-based systems):
+Create the `ansible` user with sudo privileges (ansible user will be use to execute commands received from ansible controller) on host systems with the following commands (for Debian-based systems):
 
 ```bash
 sudo adduser ansible
 sudo usermod -aG sudo ansible
 su ansible
-sudo apt install software-properties-common
-sudo add-apt-repository --yes --update ppa:ansible/ansible
-sudo apt update
-sudo apt install ansible
 ```
 
-### Setting up Password-less Sudo Privileges on Host
+#### Setting up Password-less Sudo Privileges on Host
 
 To set up password-less sudo for the `ansible` user on the host system, follow these steps:
 
@@ -113,6 +133,8 @@ To set up password-less sudo for the `ansible` user on the host system, follow t
     ```
 
 ### 3. Setting up SSH
+
+In Ansible, SSH enables secure, passwordless communication between the control node and managed nodes. By using SSH keys, Ansible automates authentication, enhancing security and scalability, while avoiding the need for manual passwords. This method also simplifies management and key rotation.
 
 **Creating SSH key for ansible user on the Ansible controller:**
 
@@ -139,14 +161,12 @@ To set up password-less sudo for the `ansible` user on the host system, follow t
     ```bash
     ssh ansible@host_ip
     ```
-
----
-
-## Ansible Ad-Hoc Commands
+    
+### Ansible Ad-Hoc Commands
 
 In Ansible, an **ad-hoc command** is a one-time command that allows you to execute tasks on host systems without creating a full playbook. This is useful for quick, simple tasks. You can execute ad-hoc commands directly (without modules) with the `-a` flag.
 
-### Format of ad-hoc commands (without module):
+### Format of ad-hoc commands (without module)
 
 ```bash
 ansible <hosts> -a "<shell command>"
@@ -201,7 +221,6 @@ An **Ansible playbook** is a YAML file that defines a series of tasks to be exec
 ---
   vars:
     package_name: nginx
-    service_name: nginx
 
   tasks:
     - name: Install the specified package

@@ -96,3 +96,59 @@ sudo apt install software-properties-common
 sudo add-apt-repository --yes --update ppa:ansible/ansible
 sudo apt update
 sudo apt install ansible
+```
+
+### Setting up Password-less Sudo Privileges on Host
+
+To set up password-less sudo for the `ansible` user on the host system, follow these steps:
+
+1. Open the sudoers file using `visudo`:
+    ```bash
+    sudo visudo
+    ```
+
+2. Add the following line in the sudoers file:
+    ```
+    ansible   ALL=(ALL)		NOPASSWD: ALL
+    ```
+
+### 3. Setting up SSH
+
+**Creating SSH key for ansible user on the Ansible controller:**
+
+1. Generate the SSH key pair for the `ansible` user:
+    ```bash
+    ssh-keygen -t rsa
+    ```
+
+2. **Viewing the Ansible controller public SSH key:**
+    ```bash
+    cat .ssh/id_rsa.pub
+    ```
+
+**Sharing SSH key with the host:**
+
+1. Copy the SSH key to the host using the following command:
+    ```bash
+    ssh-copy-id ansible@host_ip
+    ```
+
+**Verifying SSH sharing:**
+
+1. To verify the SSH key sharing is successful, run:
+    ```bash
+    ssh ansible@host_ip
+    ```
+
+---
+
+## Ansible Ad-Hoc Commands
+
+In Ansible, an **ad-hoc command** is a one-time command that allows you to execute tasks on host systems without creating a full playbook. This is useful for quick, simple tasks. You can execute ad-hoc commands directly (without modules) with the `-a` flag.
+
+### Some examples of ad-hoc commands:
+
+```bash
+ansible <hosts> -a "<shell command>"
+```
+

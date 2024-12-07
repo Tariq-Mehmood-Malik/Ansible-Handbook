@@ -146,9 +146,59 @@ To set up password-less sudo for the `ansible` user on the host system, follow t
 
 In Ansible, an **ad-hoc command** is a one-time command that allows you to execute tasks on host systems without creating a full playbook. This is useful for quick, simple tasks. You can execute ad-hoc commands directly (without modules) with the `-a` flag.
 
-### Some examples of ad-hoc commands:
+### Format of ad-hoc commands (without module):
 
 ```bash
 ansible <hosts> -a "<shell command>"
 ```
 
+### Some examples of ad-hoc commands:
+
+```bash
+ansible host -a "uptime"
+```
+```bash
+ansible host -a "mkdir /home/ansible/test"
+```
+## Ansible Modules
+
+You can use predefined **modules** in Ansible to perform tasks easily. Below are some examples:
+
+### General Syntax:
+```bash
+ansible <hosts> -m <module> -a "<arguments>"
+```
+```bash
+ansible all -m copy -a "src=/home/ansible/test.txt dest=/home/ansible/test.txt"
+```
+
+## Ansible Playbook
+
+An **Ansible playbook** is a YAML file that defines a series of tasks to be executed on host systems. It allows you to run multiple tasks on multiple hosts in one go.
+
+### Key Elements of a Playbook:
+- **Target:** Defines the hosts and basic configurations for the playbook.
+   ```yaml
+---
+- hosts: webservers
+  become: yes  # Run tasks with sudo privileges
+  ```
+- **Tasks:** Each task defines a specific action to be performed. Tasks use Ansible modules to perform actions.
+- **Variables:** Variables can be defined to customize the behavior of your playbook.
+- **Handlers:** Special tasks that run only when notified by another task, usually for tasks like restarting services or reloading configurations after changes.
+
+### Example of a Simple YAML Ansible Playbook:
+```yaml
+---
+- hosts: webservers
+  become: yes  # Run tasks with sudo privileges
+  tasks:
+    - name: Install nginx package
+      apt:
+        name: nginx
+        state: present
+    - name: Start nginx service
+      service:
+        name: nginx
+        state: started
+```

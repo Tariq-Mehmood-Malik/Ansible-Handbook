@@ -73,7 +73,7 @@ It can be divided into 3 parts:
     ```bash
     sudo nano /etc/ansible/ansible.cfg
     ```
-    Add the following configuration settings after the `[defaults]` section:
+    Add the following configuration settings in the `[defaults]` section:
     ```
     remote_user=ansible
     host_key_checking=False

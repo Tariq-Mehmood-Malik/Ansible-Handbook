@@ -178,20 +178,14 @@ An **Ansible playbook** is a YAML file that defines a series of tasks to be exec
 
 ### Key Elements of a Playbook:
 - **Target:** Defines the hosts and basic configurations for the playbook.
-   ```yaml
----
-- hosts: webservers
-  become: yes  # Run tasks with sudo privileges
-  ```
-- **Tasks:** Each task defines a specific action to be performed. Tasks use Ansible modules to perform actions.
-- **Variables:** Variables can be defined to customize the behavior of your playbook.
-- **Handlers:** Special tasks that run only when notified by another task, usually for tasks like restarting services or reloading configurations after changes.
-
-### Example of a Simple YAML Ansible Playbook:
 ```yaml
 ---
 - hosts: webservers
   become: yes  # Run tasks with sudo privileges
+```
+- **Tasks:** Each task defines a specific action to be performed. Tasks use Ansible modules to perform actions.
+```yaml
+---
   tasks:
     - name: Install nginx package
       apt:
@@ -202,3 +196,73 @@ An **Ansible playbook** is a YAML file that defines a series of tasks to be exec
         name: nginx
         state: started
 ```
+- **Variables:** Variables can be defined to customize the behavior of your playbook.
+```yaml
+---
+  vars:
+    package_name: nginx
+    service_name: nginx
+
+  tasks:
+    - name: Install the specified package
+      apt:
+        name: "{{ package_name }}"
+        state: present
+```
+- **Handlers(notify):** Special tasks that run only when notified by another task, usually for tasks like restarting services or reloading configurations after changes.
+```yaml
+---
+  tasks:
+    - name: Install nginx package
+      apt:
+        name: nginx
+        state: latest
+      notify:
+        - Restart nginx
+
+  handlers:
+    - name: Restart nginx
+      service:
+        name: nginx
+        state: restarted
+```
+
+
+### Example of a Ansible Playbook with all above elements:
+## Ansible Playbook with Task Variables and Handlers
+
+This example demonstrates how to use **task-specific variables** and **handlers** in a playbook. Task-specific variables allow you to define values that are only applicable to a particular task, and handlers are used to perform actions (like restarting a service) only when required.
+
+### Example: Playbook with Task Variables and Handlers
+
+This playbook installs or updates the `nginx` package, and if the package is changed, it notifies the handler to restart the `nginx` service.
+
+```yaml
+---
+- hosts: webservers
+  become: yes  # Run tasks with sudo privileges
+  vars:
+    default_package: nginx
+
+  tasks:
+    - name: Install or update nginx package
+      apt:
+        name: "{{ package_name | default(default_package) }}"
+        state: latest
+      notify:
+        - Restart nginx
+      vars:
+        package_name: apache2  # Task-specific variable overrides default
+  
+    - name: Ensure nginx is started
+      service:
+        name: "{{ default_package }}"
+        state: started
+
+  handlers:
+    - name: Restart nginx
+      service:
+        name: nginx
+        state: restarted
+```
+

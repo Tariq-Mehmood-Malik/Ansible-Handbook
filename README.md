@@ -101,7 +101,7 @@
    sudo nano /etc/ansible/ansible.cfg
    ```
    Add the following configuration settings in the `[defaults]` section:
-   ```
+   ```bash
    remote_user=ansible      # can change name with your user name
    host_key_checking=False
    ```
@@ -134,15 +134,15 @@
        ```
    3. **Sharing SSH key with the host:**
      Sharin the SSH key with hostusing the following command:
-     ```bash
-     ssh-copy-id user_name@host_ip  
-     ```
-     Replace `user_name` with ansible if you have created ansible username on host system & `host_ip` with IP address of host
+      ```bash
+       ssh-copy-id user_name@host_ip  
+      ```
+      Replace `user_name` with ansible if you have created ansible username on host system & `host_ip` with IP address of host
    4. **Verifying SSH sharing:**
      To verify the SSH key shared successfully, run:
-     ```bash
-     ssh user_name@host_ip
-     ```
+      ```bash
+      ssh user_name@host_ip
+      ```
   ## Setting up Ansible for Windows Host
   ### Installing pywinrm on controller
    `pywinrm` is a Python library that allows Ansible to communicate with Windows hosts using Windows Remote Management (WinRM). WinRM is a Microsoft protocol that enables remote management of Windows machines, and pywinrm is used by Ansible to interact with Windows systems over WinRM. (Make sure python3 is pre-installed in system)

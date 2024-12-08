@@ -71,13 +71,13 @@ First, we create the `ansible` user and provide it sudo privileges with the foll
 
    To set up password-less sudo access for the `ansible` user on the host system, follow these steps:
    Open the sudoers file using `visudo`:
-       ```bash
+   ```bash
        sudo visudo
-       ```
+   ```
    Add the following line in the end of sudoers file:
-       ```bash
+   ```bash
        ansible   ALL=(ALL)		NOPASSWD: ALL
-       ```
+   ```
 ## Installing Ansible Software on Controller
 
    Now that we have created the ansible user on the controller, we need to install and configure Ansible on the controller with the following commands:

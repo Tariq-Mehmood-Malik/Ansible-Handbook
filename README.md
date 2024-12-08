@@ -27,7 +27,7 @@ It is known for its scalability, ease of use, and ability to manage diverse envi
    
    ```ini
    [webservers]       # Group name
-   web1.example.com   # Host Ip or Domain name
+   web1.example.com   # Host Ip or Domain address
    web2.example.com
    
    [databases]
@@ -37,28 +37,12 @@ It is known for its scalability, ease of use, and ability to manage diverse envi
    ### 2. Dynamic Inventory
    A dynamic inventory allows Ansible to automatically pull information about hosts from external sources, such as cloud providers like AWS, GCP, and others. This is particularly useful for cloud environments where hosts might be created or destroyed dynamically.
    
-   ### Example: AWS
-   For AWS, you can use the `ec2.py` script (provided by Ansible) to dynamically generate the inventory based on the EC2 instances running in your AWS account.
-   
-   You can configure a dynamic inventory in a configuration file or use an inventory plugin to interact with cloud APIs.
-   
-   ### Example Command:
-   To list the inventory from a dynamic source, you can run the following command:
-   
-   ```bash
-   ansible-inventory -i aws_ec2.yaml --list
-   ```
 
 # Setting Up Ansible Insfrastructure
 
-   It can be divided into 3 parts:
-   1. Configuring Ansible Controller
-   2. Configuring Ansible hosts
-   3. Setting up SSH 
+## Creating ansible user on Controller
 
-## 1. Configuring Ansible Controller
-
-First, we create the `ansible` user and provide it sudo privileges with the following commands (for Debian-based systems):
+First, we create the `ansible` user and provide it sudo privileges with the following commands(which we will use to perform all task on host systems you can use your own user for it and can skip this step):
    
    **Creating user ansible:**
    ```bash
@@ -70,40 +54,36 @@ First, we create the `ansible` user and provide it sudo privileges with the foll
    sudo usermod -aG sudo ansible
    ```
 
-   **Switching to ansible user:**
+   **Switching to ansible user (for verification):**
    ```bash
    su ansible
    ```
+## Installing Ansible on Controller
 
    Now that we have created the ansible user on the controller, we need to install and configure Ansible on the controller with the following commands:
     **Installing Ansible:**
    ```bash
-   sudo apt install software-properties-common
-   sudo add-apt-repository --yes --update ppa:ansible/ansible
    sudo apt update
    sudo apt install ansible
    ```
-
    **Verifying Ansible installation:**
    ```bash
    ansible --version
    ```
-
    **Creating default Configuration file:**
    ```bash
    cd /etc/ansible 
-   sudo su
+   sudo su                # switch to root user to create config file
    ansible-config init -t all --disabled > ansible.cfg
-   exit
+   exit                   # exit from root user
    ```
-
-   **Modify the configuration:**
+   **Modifying the configuration file:**
    ```bash
    sudo nano /etc/ansible/ansible.cfg
    ```
    Add the following configuration settings in the `[defaults]` section:
    ```
-   remote_user=ansible
+   remote_user=ansible      # can skip this if you are not creating ansible user
    host_key_checking=False
    ```
 
@@ -112,6 +92,45 @@ First, we create the `ansible` user and provide it sudo privileges with the foll
    ```bash
    sudo nano /etc/ansible/hosts
    ```
+  Example of inventory file with single group name `websever` with 2 hosts
+   ```ini
+   [webserver]          # Group name
+   192.168.0.1          # 1st Host Ip 
+   web2.example.com     # 2nd Host domain address
+   ```
+## Setting up SSH on Controller for linux based Hosts
+
+   Ansible use SSH for linux based host to enables secure, passwordless communication between the controller and managed (host) nodes. By using SSH keys, Ansible automates authentication, enhancing security and scalability, 
+   while avoiding the need for manual passwords.
+   
+   **Creating SSH key for ansible user on the Ansible controller:**
+   
+   1. Generate the SSH key pair for the `ansible` user:
+       ```bash
+       ssh-keygen -t rsa
+       ```
+   
+   2. **Viewing the Ansible controller public SSH key:**
+       ```bash
+       cat .ssh/id_rsa.pub
+       ```
+
+   3. **Sharing SSH key with the host:**
+   
+   SHare the SSH key with host (linux based) using the following command:
+   ```bash
+   ssh-copy-id user_name@host_ip  
+   ```
+   Replace `user_name` with ansible if you have created ansible username on host system & `host_ip` with IP address of host
+   
+   4. **Verifying SSH sharing:**
+   To verify the SSH key shared successfully, run:
+   ```bash
+   ssh user_name@host_ip # replace host_ip with host real IP
+   ```
+  After entering commnad press enter yes than you will be able to login to host system as ansible user
+## Addtional Configuration for Windows host
+  
 
 ## 2. Configuring Ansible Hosts
 
@@ -137,36 +156,7 @@ First, we create the `ansible` user and provide it sudo privileges with the foll
        ansible   ALL=(ALL)		NOPASSWD: ALL
        ```
 
-## 3. Setting up SSH
 
-   In Ansible, SSH enables secure, passwordless communication between the control node and managed nodes. By using SSH keys, Ansible automates authentication, enhancing security and scalability, 
-   while avoiding the need for manual passwords. This method also simplifies management and key rotation.
-   
-   **Creating SSH key for ansible user on the Ansible controller:**
-   
-   1. Generate the SSH key pair for the `ansible` user:
-       ```bash
-       ssh-keygen -t rsa
-       ```
-   
-   2. **Viewing the Ansible controller public SSH key:**
-       ```bash
-       cat .ssh/id_rsa.pub
-       ```
-   
-   **Sharing SSH key with the host:**
-   
-   Copy the SSH key to the host using the following command:
-   ```bash
-   ssh-copy-id ansible@host_ip # replace host_ip with host real IP
-   ```
-   
-   **Verifying SSH sharing:**
-   
-   To verify the SSH key sharing is successful, run:
-   ```bash
-   ssh ansible@host_ip # replace host_ip with host real IP
-   ```
 
 # Ansible Ad-Hoc Commands
 

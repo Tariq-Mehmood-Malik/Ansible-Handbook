@@ -103,7 +103,7 @@ First, we create the `ansible` user and provide it sudo privileges with the foll
    ```
    Add the following configuration settings in the `[defaults]` section:
    ```
-   remote_user=ansible      # can skip this if you are not creating ansible user
+   remote_user=ansible      # can change name with your user name
    host_key_checking=False
    ```
    **Adding host group & host IPs in inventory:**

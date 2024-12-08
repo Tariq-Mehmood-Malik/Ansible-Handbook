@@ -165,18 +165,18 @@
    ansible_connection=winrm          
    ansible_winrm_server_cert_validation=ignore  # or 'validate' for secure connections
   ```
-  ### Configuration on Windows
+  ### Configuration on Windows Host
    We can configure windows host for Ansible by running shell script in Poweshell.
     1. Download this [script](https://github.com/ansible/ansible-documentation/blob/devel/examples/scripts/ConfigureRemotingForAnsible.ps1) from github.
     2. Open PowerShell as administartor.
     3. Execute follwoing command in PowerShell.
-    ```shell
+   ```bash
     powershell.exe -ExecutionPolicy ByPass path\to\file\ConfigureRemotingForAnsible.ps1
-    ```
+   ```
     4. After that run `win_ping` module on controller to test connection.
-    ```bash
+   ```bash
     ansible [group_name] -m win_ping
-    ```
+   ```
 # Ansible Ad-Hoc Commands
 
    In Ansible, an **ad-hoc command** is a one-time command that allows you to execute tasks on host systems without creating a full playbook. This is useful for quick, simple tasks. You can       

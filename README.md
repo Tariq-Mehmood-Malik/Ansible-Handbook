@@ -18,9 +18,9 @@
   - **Host**: A target machine managed by Ansible.
   - **Inventory**: A file listing all hosts and groups of hosts for automation.
   
-  ## Ansible Inventory Types
+  ### Ansible Inventory Types
   
-   ### 1. Static Inventory (INI format)
+   #### 1. Static Inventory (INI format)
    A static inventory is a simple, static file that lists all the hosts that Ansible will manage. It is commonly written in the INI format, which contains a list of groups and the hosts in each group.
    **Example of a static inventory in INI format:**
    
@@ -33,7 +33,7 @@
    db1.example.com
    db2.example.com
    ```
-   ### 2. Dynamic Inventory
+   #### 2. Dynamic Inventory
    A dynamic inventory allows Ansible to automatically pull information about hosts from external sources, such as cloud providers like AWS, GCP, and others. This is particularly useful for cloud environments where hosts might be created or destroyed dynamically.
    
 
@@ -92,9 +92,9 @@
    **Creating default Configuration file:**
    ```bash
    cd /etc/ansible 
-   sudo su                # switch to root user to create config file
+   sudo su                                            # switch to root user to create config file
    ansible-config init -t all --disabled > ansible.cfg
-   exit                   # exit from root user
+   exit                                               # exit from root user
    ```
    **Modifying the configuration file:**
    ```bash
@@ -117,8 +117,8 @@
    web2.example.com     # 2nd Host domain address
    ```
   ## Setting up Ansible for linux based Hosts
-  ### Setting up SSH connection
-   Ansible use SSH for linux based host to enables secure, passwordless communication between the controller and managed (host) nodes. By using SSH keys, Ansible automates authentication, enhancing security and scalability, 
+  ### Setting up SSH
+   Ansible use SSH for Unix based host to enables secure, passwordless communication between the controller and managed (host) nodes. By using SSH keys, Ansible automates authentication, enhancing security and scalability, 
    while avoiding the need for manual passwords.
    
    **Creating SSH key for ansible user on the Ansible controller:**
@@ -133,15 +133,15 @@
        cat .ssh/id_rsa.pub
        ```
    3. **Sharing SSH key with the host:**
-     Sharin the SSH key with hostusing the following command:
+     Sharin the SSH key with host using the following command:
       ```bash
-       ssh-copy-id user_name@host_ip  
+       ssh-copy-id ansible@host_ip  
       ```
       Replace `user_name` with ansible if you have created ansible username on host system & `host_ip` with IP address of host
    4. **Verifying SSH sharing:**
      To verify the SSH key shared successfully, run:
       ```bash
-      ssh user_name@host_ip
+      ssh ansible@host_ip
       ```
   ## Setting up Ansible for Windows Host
   ### Installing pywinrm on controller
@@ -154,7 +154,7 @@
    sudo apt install python3-winrm
    ```
   ### Setting inventory file for windows host on controller
-   winrm connection requires additional information in to establish connection. This information can be added in inventory as following:
+   winrm connection requires additional information in order to establish connection. This information can be added in inventory as following:
   ```ini
    [windows]
    192.168.0.122            # window host IP
@@ -164,12 +164,12 @@
    ansible_password=your_password    #Host machine password
    ansible_connection=winrm          
    ansible_winrm_server_cert_validation=ignore  # or 'validate' for secure connections
- ```
-  ### Configure a Windows host for Ansible
+  ```
+  ### Configuration on Windows
    We can configure windows host for Ansible by running shell script in Poweshell.
     1. Download this [script](https://github.com/ansible/ansible-documentation/blob/devel/examples/scripts/ConfigureRemotingForAnsible.ps1) from github.
-    2. Open PowerShell as administartor
-    3. Execute follwoing command in PowerShell
+    2. Open PowerShell as administartor.
+    3. Execute follwoing command in PowerShell.
     ```shell
     powershell.exe -ExecutionPolicy ByPass path\to\file\ConfigureRemotingForAnsible.ps1
     ```
@@ -218,7 +218,6 @@
    ```
    ### Example
    To get details about the `copy` module, use:
-   
    ```bash
    ansible-doc copy
    ```

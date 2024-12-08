@@ -126,6 +126,7 @@ First, we create the `ansible` user and provide it sudo privileges with the foll
    
    1. Generate the SSH key pair for the `ansible` user:
        ```bash
+       su ansible
        ssh-keygen -t rsa
        ```
    

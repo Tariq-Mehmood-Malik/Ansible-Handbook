@@ -42,7 +42,7 @@ It is known for its scalability, ease of use, and ability to manage diverse envi
 
 ## Creating ansible user on Controller
 
-First, we create the `ansible` user and provide it sudo privileges with the following commands(which we will use to perform all task on host systems you can use your own user for it and can skip this step):
+First, we create the `ansible` user and provide it sudo privileges with the following commands(we will use this user to perform all task on host systems you can use your own user for it and can skip this step):
    
    **Creating user ansible:**
    ```bash
@@ -58,7 +58,27 @@ First, we create the `ansible` user and provide it sudo privileges with the foll
    ```bash
    su ansible
    ```
-## Installing Ansible on Controller
+## Creating ansible user on Hosts
+
+   Create the `ansible` user with sudo privileges:
+   
+   ```bash
+   sudo adduser ansible
+   sudo usermod -aG sudo ansible
+   su ansible
+   ```
+  ### Setting up Password-less Sudo Privileges on Host
+
+   To set up password-less sudo access for the `ansible` user on the host system, follow these steps:
+   Open the sudoers file using `visudo`:
+       ```bash
+       sudo visudo
+       ```
+   Add the following line in the end of sudoers file:
+       ```
+       ansible   ALL=(ALL)		NOPASSWD: ALL
+       ```
+## Installing Ansible Software on Controller
 
    Now that we have created the ansible user on the controller, we need to install and configure Ansible on the controller with the following commands:
     **Installing Ansible:**
@@ -86,7 +106,6 @@ First, we create the `ansible` user and provide it sudo privileges with the foll
    remote_user=ansible      # can skip this if you are not creating ansible user
    host_key_checking=False
    ```
-
    **Adding host group & host IPs in inventory:**
    Enter the host group & names in inventory
    ```bash
@@ -98,8 +117,8 @@ First, we create the `ansible` user and provide it sudo privileges with the foll
    192.168.0.1          # 1st Host Ip 
    web2.example.com     # 2nd Host domain address
    ```
-## Setting up SSH on Controller for linux based Hosts
-
+## Setting up Ansible for linux based Hosts
+  ### Setting up SSH connection
    Ansible use SSH for linux based host to enables secure, passwordless communication between the controller and managed (host) nodes. By using SSH keys, Ansible automates authentication, enhancing security and scalability, 
    while avoiding the need for manual passwords.
    
@@ -126,38 +145,43 @@ First, we create the `ansible` user and provide it sudo privileges with the foll
    4. **Verifying SSH sharing:**
    To verify the SSH key shared successfully, run:
    ```bash
-   ssh user_name@host_ip # replace host_ip with host real IP
-   ```
-  After entering commnad press enter yes than you will be able to login to host system as ansible user
-## Addtional Configuration for Windows host
-  
-
-## 2. Configuring Ansible Hosts
-
-   Create the `ansible` user with sudo privileges (ansible user will be use to execute commands received from ansible controller) on host systems with the following commands (for Debian-based        systems):
-   
-   ```bash
-   sudo adduser ansible
-   sudo usermod -aG sudo ansible
-   su ansible
+   ssh user_name@host_ip
    ```
 
-### Setting up Password-less Sudo Privileges on Host
+## Setting up Ansible for Windows Host
+  ### Installing pywinrm on controller
+  `pywinrm` is a Python library that allows Ansible to communicate with Windows hosts using Windows Remote Management (WinRM). WinRM is a Microsoft protocol that enables remote management of Windows machines, and pywinrm is used by Ansible to interact with Windows systems over WinRM. (Make sure python3 is pre-installed in system)
+  ```bash
+  pip3 install pywinrm
+  ```
+  If you are getting error try using following command
+  ```bash
+  sudo apt install python3-winrm
+  ```
+  ### Setting inventory file for windows host on controller
+  winrm connection requires additional information in to establish connection. This information can be added in inventory as following:
+   ```ini
+  [windows]
+  192.168.0.122            # window host IP
 
-   To set up password-less sudo for the `ansible` user on the host system, follow these steps:
-   
-   1. Open the sudoers file using `visudo`:
-       ```bash
-       sudo visudo
-       ```
-   
-   2. Add the following line in the sudoers file:
-       ```
-       ansible   ALL=(ALL)		NOPASSWD: ALL
-       ```
-
-
-
+  [windows:vars]
+  ansible_user=Administrator        #Host machine user name
+  ansible_password=your_password    #Host machine password
+  ansible_connection=winrm          
+  ansible_winrm_server_cert_validation=ignore  # or 'validate' for secure connections
+  ```
+  ### Configure a Windows host for Ansible
+  We can configure windows host for Ansible by running shell script in Poweshell.
+  1. Download this [script](https://github.com/ansible/ansible-documentation/blob/devel/examples/scripts/ConfigureRemotingForAnsible.ps1) from github.
+  2. Open PowerShell as administartor
+  3. Execute follwoing command in PowerShell
+  ```shell
+  powershell.exe -ExecutionPolicy ByPass path\to\file\ConfigureRemotingForAnsible.ps1
+  ```
+  4. After that run `win_ping` module on controller to test connection.
+  ```bash
+  ansible [group_name] -m win_ping
+  ```
 # Ansible Ad-Hoc Commands
 
    In Ansible, an **ad-hoc command** is a one-time command that allows you to execute tasks on host systems without creating a full playbook. This is useful for quick, simple tasks. You can       

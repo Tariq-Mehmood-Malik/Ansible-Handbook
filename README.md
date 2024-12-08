@@ -1,26 +1,25 @@
 # Ansible
 
-Ansible is an open-source automation tool used to automate tasks in IT systems. It works as a remote controller for managing computers, servers, and other devices. Ansible can be used to set up software, configure systems, or run commands on each device.
-
-It works by using simple ad-hoc commands or by using a book of instructions called playbooks written in a language called YAML. These playbooks tell Ansible what actions to perform on host devices.
-
-It connects to target systems via SSH or WinRM. It's agentless, meaning no special software needs to be installed on the managed nodes. It is push-based, meaning the control node pushes out configurations or tasks to the host nodes when you execute an ad-hoc command/playbook.
-
-It is known for its scalability, ease of use, and ability to manage diverse environments, including servers, cloud platforms, and network devices, all while ensuring consistency and reliability across systems.
-
-### Key Terms of Ansible:
-- **Ansible Controller**: The machine from which Ansible is run.
-- **Module**: A unit of work Ansible uses to perform tasks.
-- **Task**: A single action within a playbook.
-- **Role**: A reusable set of tasks and configurations.
-- **Fact**: Information about a system gathered by Ansible.
-- **Play**: A section of a playbook targeting specific hosts with specific tasks.
-- **Host**: A target machine managed by Ansible.
-- **Inventory**: A file listing all hosts and groups of hosts for automation.
-
-  ## Ansible Inventory
-   An inventory is a list of managed nodes that Ansible communicates with. The inventory can be static (a file) or dynamic (automatically generated from cloud providers or other sources). 
-   Inventory is used to define hosts and groups of hosts.
+  Ansible is an open-source automation tool used to automate tasks in IT systems. It works as a remote controller for managing computers, servers, and other devices. Ansible can be used to set up software, configure systems, or run commands on each device.
+  
+  It works by using simple ad-hoc commands or by using a book of instructions called playbooks written in a language called YAML. These playbooks tell Ansible what actions to perform on host devices.
+  
+  It connects to target systems via SSH or WinRM. It's agentless, meaning no special software needs to be installed on the managed nodes. It is push-based, meaning the control node pushes out configurations or tasks to the host nodes when you execute an ad-hoc command/playbook.
+  
+  It is known for its scalability, ease of use, and ability to manage diverse environments, including servers, cloud platforms, and network devices, all while ensuring consistency and reliability across systems.
+  
+  ### Key Terms of Ansible:
+  - **Ansible Controller**: The machine from which Ansible is run.
+  - **Module**: A unit of work Ansible uses to perform tasks.
+  - **Task**: A single action within a playbook.
+  - **Role**: A reusable set of tasks and configurations.
+  - **Fact**: Information about a system gathered by Ansible.
+  - **Play**: A section of a playbook targeting specific hosts with specific tasks.
+  - **Host**: A target machine managed by Ansible.
+  - **Inventory**: A file listing all hosts and groups of hosts for automation.
+  
+  ## Ansible Inventory Types
+  
    ### 1. Static Inventory (INI format)
    A static inventory is a simple, static file that lists all the hosts that Ansible will manage. It is commonly written in the INI format, which contains a list of groups and the hosts in each group.
    **Example of a static inventory in INI format:**
@@ -38,11 +37,11 @@ It is known for its scalability, ease of use, and ability to manage diverse envi
    A dynamic inventory allows Ansible to automatically pull information about hosts from external sources, such as cloud providers like AWS, GCP, and others. This is particularly useful for cloud environments where hosts might be created or destroyed dynamically.
    
 
-# Setting Up Ansible Insfrastructure
+  # Setting Up Ansible Insfrastructure
+  
+  ## Creating ansible user on Controller
 
-## Creating ansible user on Controller
-
-First, we create the `ansible` user and provide it sudo privileges with the following commands(we will use this user to perform all task on host systems you can use your own user for it and can skip this step):
+  First, we create the `ansible` user and provide it sudo privileges with the following commands(we will use this user to perform all task on host systems you can use your own user for it and can skip this step):
    
    **Creating user ansible:**
    ```bash
@@ -58,7 +57,7 @@ First, we create the `ansible` user and provide it sudo privileges with the foll
    ```bash
    su ansible
    ```
-## Creating ansible user on Hosts
+  ## Creating ansible user on Hosts
 
    Create the `ansible` user with sudo privileges:
    
@@ -78,7 +77,7 @@ First, we create the `ansible` user and provide it sudo privileges with the foll
    ```bash
    ansible   ALL=(ALL)		NOPASSWD: ALL
    ```
-## Installing Ansible Software on Controller
+  ## Installing Ansible Software on Controller
 
    Now that we have created the ansible user on the controller, we need to install and configure Ansible on the controller with the following commands:
     **Installing Ansible:**
@@ -117,7 +116,7 @@ First, we create the `ansible` user and provide it sudo privileges with the foll
    192.168.0.1          # 1st Host Ip 
    web2.example.com     # 2nd Host domain address
    ```
-## Setting up Ansible for linux based Hosts
+  ## Setting up Ansible for linux based Hosts
   ### Setting up SSH connection
    Ansible use SSH for linux based host to enables secure, passwordless communication between the controller and managed (host) nodes. By using SSH keys, Ansible automates authentication, enhancing security and scalability, 
    while avoiding the need for manual passwords.
@@ -128,61 +127,56 @@ First, we create the `ansible` user and provide it sudo privileges with the foll
        ```bash
        su ansible
        ssh-keygen -t rsa
-       ```
-   
+       ``` 
    2. **Viewing the Ansible controller public SSH key:**
        ```bash
        cat .ssh/id_rsa.pub
        ```
-
    3. **Sharing SSH key with the host:**
-   
-   SHare the SSH key with host (linux based) using the following command:
-   ```bash
-   ssh-copy-id user_name@host_ip  
-   ```
-   Replace `user_name` with ansible if you have created ansible username on host system & `host_ip` with IP address of host
-   
+     Sharin the SSH key with hostusing the following command:
+     ```bash
+     ssh-copy-id user_name@host_ip  
+     ```
+     Replace `user_name` with ansible if you have created ansible username on host system & `host_ip` with IP address of host
    4. **Verifying SSH sharing:**
-   To verify the SSH key shared successfully, run:
-   ```bash
-   ssh user_name@host_ip
-   ```
-
-## Setting up Ansible for Windows Host
+     To verify the SSH key shared successfully, run:
+     ```bash
+     ssh user_name@host_ip
+     ```
+  ## Setting up Ansible for Windows Host
   ### Installing pywinrm on controller
-  `pywinrm` is a Python library that allows Ansible to communicate with Windows hosts using Windows Remote Management (WinRM). WinRM is a Microsoft protocol that enables remote management of Windows machines, and pywinrm is used by Ansible to interact with Windows systems over WinRM. (Make sure python3 is pre-installed in system)
-  ```bash
-  pip3 install pywinrm
-  ```
-  If you are getting error try using following command
-  ```bash
-  sudo apt install python3-winrm
-  ```
+   `pywinrm` is a Python library that allows Ansible to communicate with Windows hosts using Windows Remote Management (WinRM). WinRM is a Microsoft protocol that enables remote management of Windows machines, and pywinrm is used by Ansible to interact with Windows systems over WinRM. (Make sure python3 is pre-installed in system)
+   ```bash
+   pip3 install pywinrm
+   ```
+   If you are getting error try using following command
+   ```bash
+   sudo apt install python3-winrm
+   ```
   ### Setting inventory file for windows host on controller
-  winrm connection requires additional information in to establish connection. This information can be added in inventory as following:
-   ```ini
-  [windows]
-  192.168.0.122            # window host IP
-
-  [windows:vars]
-  ansible_user=Administrator        #Host machine user name
-  ansible_password=your_password    #Host machine password
-  ansible_connection=winrm          
-  ansible_winrm_server_cert_validation=ignore  # or 'validate' for secure connections
-  ```
+   winrm connection requires additional information in to establish connection. This information can be added in inventory as following:
+  ```ini
+   [windows]
+   192.168.0.122            # window host IP
+  
+   [windows:vars]
+   ansible_user=Administrator        #Host machine user name
+   ansible_password=your_password    #Host machine password
+   ansible_connection=winrm          
+   ansible_winrm_server_cert_validation=ignore  # or 'validate' for secure connections
+ ```
   ### Configure a Windows host for Ansible
-  We can configure windows host for Ansible by running shell script in Poweshell.
-  1. Download this [script](https://github.com/ansible/ansible-documentation/blob/devel/examples/scripts/ConfigureRemotingForAnsible.ps1) from github.
-  2. Open PowerShell as administartor
-  3. Execute follwoing command in PowerShell
-  ```shell
-  powershell.exe -ExecutionPolicy ByPass path\to\file\ConfigureRemotingForAnsible.ps1
-  ```
-  4. After that run `win_ping` module on controller to test connection.
-  ```bash
-  ansible [group_name] -m win_ping
-  ```
+   We can configure windows host for Ansible by running shell script in Poweshell.
+    1. Download this [script](https://github.com/ansible/ansible-documentation/blob/devel/examples/scripts/ConfigureRemotingForAnsible.ps1) from github.
+    2. Open PowerShell as administartor
+    3. Execute follwoing command in PowerShell
+    ```shell
+    powershell.exe -ExecutionPolicy ByPass path\to\file\ConfigureRemotingForAnsible.ps1
+    ```
+    4. After that run `win_ping` module on controller to test connection.
+    ```bash
+    ansible [group_name] -m win_ping
+    ```
 # Ansible Ad-Hoc Commands
 
    In Ansible, an **ad-hoc command** is a one-time command that allows you to execute tasks on host systems without creating a full playbook. This is useful for quick, simple tasks. You can       
